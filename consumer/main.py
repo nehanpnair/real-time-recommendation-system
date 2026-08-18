@@ -1,6 +1,7 @@
 import json
 
 from confluent_kafka import Consumer
+from state import create_user_state, update_user_state
 
 from config import (
     KAFKA_BOOTSTRAP_SERVERS,
@@ -18,6 +19,8 @@ consumer = Consumer({
 
 def main():
     consumer.subscribe([KAFKA_TOPIC])
+
+    user_state = create_user_state()
 
     print(
         f"Listening to topic '{KAFKA_TOPIC}' "
@@ -48,12 +51,19 @@ def main():
                 )
                 continue
 
+            update_user_state(user_state, event)
+
+            user = user_state[event["user_id"]]
+
             print(
                 f"Received | "
                 f"partition={message.partition()} "
                 f"offset={message.offset()} "
                 f"user={event['user_id']} "
-                f"event={event['event_type']}"
+                f"event={event['event_type']} "
+                f"views_5m={user['views_5m']} "
+                f"clicks_5m={user['clicks_5m']} "
+                f"watermark={user['watermark'].isoformat()}"
             )
 
     except KeyboardInterrupt:
