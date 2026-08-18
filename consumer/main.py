@@ -1,7 +1,8 @@
 import json
 
 from confluent_kafka import Consumer
-from state import create_user_state, update_user_state
+from state import update_user_state
+from checkpoint import load_checkpoint, save_checkpoint
 
 from config import (
     KAFKA_BOOTSTRAP_SERVERS,
@@ -20,7 +21,8 @@ consumer = Consumer({
 def main():
     consumer.subscribe([KAFKA_TOPIC])
 
-    user_state = create_user_state()
+    user_state = load_checkpoint()
+    message_count = 0
 
     print(
         f"Listening to topic '{KAFKA_TOPIC}' "
@@ -52,6 +54,10 @@ def main():
                 continue
 
             update_user_state(user_state, event)
+            message_count += 1
+
+            if message_count % 100 == 0:
+                save_checkpoint(user_state)
 
             user = user_state[event["user_id"]]
 
@@ -68,6 +74,7 @@ def main():
 
     except KeyboardInterrupt:
         print("\nStopping consumer...")
+        save_checkpoint(user_state)
 
     finally:
         consumer.close()
