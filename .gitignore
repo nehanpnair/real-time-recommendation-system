@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 data/
 consumer/checkpoints/
+spark/spark/output/
+spark/spark/checkpoints/
