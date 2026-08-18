@@ -6,7 +6,7 @@ from datetime import datetime
 from state import create_user_state
 
 
-CHECKPOINT_DIR = "checkpoints"
+CHECKPOINT_DIR = "consumer/checkpoints"
 CHECKPOINT_FILE = os.path.join(
     CHECKPOINT_DIR,
     "state.json",
