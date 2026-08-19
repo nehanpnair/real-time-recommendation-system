@@ -111,6 +111,16 @@ events = events.withColumn(
     col("event_time").cast("timestamp"),
 )
 
+interactions = (
+    events
+    .select(
+        "user_id",
+        "item_id",
+        "event_type",
+        "event_time",
+    )
+)
+
 
 # Watermark + 5-minute sliding window
 
@@ -174,4 +184,21 @@ query = (
 )
 
 
-query.awaitTermination()
+interaction_query = (
+    interactions
+    .writeStream
+    .format("parquet")
+    .outputMode("append")
+    .option(
+        "path",
+        "spark/output/interactions",
+    )
+    .option(
+        "checkpointLocation",
+        "spark/checkpoints/interactions",
+    )
+    .trigger(processingTime="30 seconds")
+    .start()
+)
+
+spark.streams.awaitAnyTermination()
