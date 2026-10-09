@@ -6,7 +6,7 @@ The project demonstrates an end-to-end recommendation workflow: synthetic user a
 
 ## Project Overview
 
-StreamRec processes user-item interaction events such as views, clicks, searches, add-to-cart actions, and purchases. The streaming layer produces windowed user features and persists raw interaction records for downstream machine learning. change
+StreamRec processes user-item interaction events such as views, clicks, searches, add-to-cart actions, and purchases. The streaming layer produces windowed user features and persists raw interaction records for downstream machine learning.
 
 The current recommendation model is Spark MLlib ALS collaborative filtering. The synthetic dataset is intended to demonstrate the complete streaming and ML pipeline rather than represent production traffic or catalog behavior.
 
